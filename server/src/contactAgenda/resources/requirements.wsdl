@@ -210,7 +210,7 @@
     <!-- Service -->
     <service name="ContactAgendaService">
         <port name="ContactAgendaPort" binding="tns:ContactAgendaBinding">
-            <soap12:address location="{{HOST_API}}/contactAgenda"/>
+            <soap12:address location="http://localhost:4000/contactAgenda"/>
         </port>
     </service>
 </definitions>

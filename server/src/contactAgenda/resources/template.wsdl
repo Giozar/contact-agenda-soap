@@ -1,0 +1,216 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.example.org/contactAgenda"
+             name="ContactAgendaService"
+             targetNamespace="http://www.example.org/contactAgenda">
+
+    <types>
+        <xs:schema targetNamespace="http://www.example.org/contactAgenda">
+            <!-- Elementos de entrada y salida para las operaciones -->
+            <xs:element name="AddContact">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="name" type="xs:string"/>
+                        <xs:element name="primaryPhone" type="xs:string"/>
+                        <xs:element name="mobilePhone" type="xs:string"/>
+                        <xs:element name="email" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AddContactResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="success" type="xs:boolean"/>
+                        <xs:element name="message" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="EditContact">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="name" type="xs:string"/>
+                        <xs:element name="primaryPhone" type="xs:string"/>
+                        <xs:element name="mobilePhone" type="xs:string"/>
+                        <xs:element name="email" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="EditContactResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="success" type="xs:boolean"/>
+                        <xs:element name="message" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="DeleteContact">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="name" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="DeleteContactResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="success" type="xs:boolean"/>
+                        <xs:element name="message" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="SearchContact">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="name" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SearchContactResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="primaryPhone" type="xs:string"/>
+                        <xs:element name="mobilePhone" type="xs:string"/>
+                        <xs:element name="email" type="xs:string"/>
+                        <xs:element name="found" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="SortContacts">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="criteria" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SortContactsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="sortedContacts" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </types>
+
+    <!-- Mensajes -->
+    <message name="AddContactRequest">
+        <part name="parameters" element="tns:AddContact"/>
+    </message>
+    <message name="AddContactResponse">
+        <part name="parameters" element="tns:AddContactResponse"/>
+    </message>
+
+    <message name="EditContactRequest">
+        <part name="parameters" element="tns:EditContact"/>
+    </message>
+    <message name="EditContactResponse">
+        <part name="parameters" element="tns:EditContactResponse"/>
+    </message>
+
+    <message name="DeleteContactRequest">
+        <part name="parameters" element="tns:DeleteContact"/>
+    </message>
+    <message name="DeleteContactResponse">
+        <part name="parameters" element="tns:DeleteContactResponse"/>
+    </message>
+
+    <message name="SearchContactRequest">
+        <part name="parameters" element="tns:SearchContact"/>
+    </message>
+    <message name="SearchContactResponse">
+        <part name="parameters" element="tns:SearchContactResponse"/>
+    </message>
+
+    <message name="SortContactsRequest">
+        <part name="parameters" element="tns:SortContacts"/>
+    </message>
+    <message name="SortContactsResponse">
+        <part name="parameters" element="tns:SortContactsResponse"/>
+    </message>
+
+    <!-- PortType -->
+    <portType name="ContactAgendaPortType">
+        <operation name="AddContact">
+            <input message="tns:AddContactRequest"/>
+            <output message="tns:AddContactResponse"/>
+        </operation>
+        <operation name="EditContact">
+            <input message="tns:EditContactRequest"/>
+            <output message="tns:EditContactResponse"/>
+        </operation>
+        <operation name="DeleteContact">
+            <input message="tns:DeleteContactRequest"/>
+            <output message="tns:DeleteContactResponse"/>
+        </operation>
+        <operation name="SearchContact">
+            <input message="tns:SearchContactRequest"/>
+            <output message="tns:SearchContactResponse"/>
+        </operation>
+        <operation name="SortContacts">
+            <input message="tns:SortContactsRequest"/>
+            <output message="tns:SortContactsResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="ContactAgendaBinding" type="tns:ContactAgendaPortType">
+        <soap12:binding style="rpc" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <operation name="AddContact">
+            <soap12:operation soapAction="http://www.example.org/contactAgenda/AddContact"/>
+            <input>
+                <soap12:body use="literal"/>
+            </input>
+            <output>
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="EditContact">
+            <soap12:operation soapAction="http://www.example.org/contactAgenda/EditContact"/>
+            <input>
+                <soap12:body use="literal"/>
+            </input>
+            <output>
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="DeleteContact">
+            <soap12:operation soapAction="http://www.example.org/contactAgenda/DeleteContact"/>
+            <input>
+                <soap12:body use="literal"/>
+            </input>
+            <output>
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SearchContact">
+            <soap12:operation soapAction="http://www.example.org/contactAgenda/SearchContact"/>
+            <input>
+                <soap12:body use="literal"/>
+            </input>
+            <output>
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SortContacts">
+            <soap12:operation soapAction="http://www.example.org/contactAgenda/SortContacts"/>
+            <input>
+                <soap12:body use="literal"/>
+            </input>
+            <output>
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="ContactAgendaService">
+        <port name="ContactAgendaPort" binding="tns:ContactAgendaBinding">
+            <soap12:address location="{{HOST_PORT}}/contactAgenda"/>
+        </port>
+    </service>
+</definitions>
