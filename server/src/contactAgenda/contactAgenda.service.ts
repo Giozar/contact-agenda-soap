@@ -1,10 +1,21 @@
-import { Contact } from './interfaces/Contact';
-import { addContact, getContactByName, updateContact, deleteContact, getAllContacts } from './contactStorage';
+import { Contact } from "./interfaces/Contact";
+import {
+  addContact,
+  getContactByName,
+  updateContact,
+  deleteContact,
+  getAllContacts,
+} from "./contactStorage";
 
 export const contactService = {
   ContactAgendaService: {
     ContactAgendaPort: {
-      async AddContact(args: { name: string; primaryPhone: string; mobilePhone: string; email: string }) {
+      async AddContact(args: {
+        name: string;
+        primaryPhone: string;
+        mobilePhone: string;
+        email: string;
+      }) {
         const newContact: Contact = {
           id: crypto.randomUUID(),
           name: args.name,
@@ -17,10 +28,18 @@ export const contactService = {
         return { success: true, message: `Contacto ${args.name} creado` };
       },
 
-      async EditContact(args: { name: string; primaryPhone: string; mobilePhone: string; email: string }) {
+      async EditContact(args: {
+        name: string;
+        primaryPhone: string;
+        mobilePhone: string;
+        email: string;
+      }) {
         const contact = await getContactByName(args.name);
         if (!contact) {
-          return { success: false, message: `Contacto ${args.name} no encontrado` };
+          return {
+            success: false,
+            message: `Contacto ${args.name} no encontrado`,
+          };
         }
         const updatedContact: Partial<Contact> = {
           ...contact,
@@ -36,7 +55,10 @@ export const contactService = {
       async DeleteContact(args: { name: string }) {
         const contact = await getContactByName(args.name);
         if (!contact) {
-          return { success: false, message: `Contacto ${args.name} no encontrado` };
+          return {
+            success: false,
+            message: `Contacto ${args.name} no encontrado`,
+          };
         }
         await deleteContact(contact.id);
         return { success: true, message: `Contacto ${args.name} eliminado` };
@@ -58,9 +80,15 @@ export const contactService = {
       async SortContacts(args: { criteria: keyof Contact }) {
         const contacts = await getAllContacts();
         // Ordena los contactos según el criterio indicado
+
         const sortedContacts = contacts.sort((a, b) => {
-          if (a[args.criteria] < b[args.criteria]) return -1;
-          if (a[args.criteria] > b[args.criteria]) return 1;
+          const valueA = a[args.criteria];
+          const valueB = b[args.criteria];
+          if (valueA === undefined) return 1;
+          if (valueB === undefined) return -1;
+
+          if (valueA < valueB) return -1;
+          if (valueA > valueB) return 1;
           return 0;
         });
 
