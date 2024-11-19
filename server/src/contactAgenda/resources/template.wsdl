@@ -73,6 +73,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="primaryPhone" type="xs:string"/>
+                        <xs:element name="name" type="xs:string"/>
                         <xs:element name="mobilePhone" type="xs:string"/>
                         <xs:element name="email" type="xs:string"/>
                         <xs:element name="found" type="xs:boolean"/>

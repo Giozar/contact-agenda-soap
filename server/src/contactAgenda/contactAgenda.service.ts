@@ -71,6 +71,7 @@ export const contactService = {
         }
         return {
           primaryPhone: contact.primaryPhone,
+          name: contact.name,
           mobilePhone: contact.mobilePhone,
           email: contact.email,
           found: true,
