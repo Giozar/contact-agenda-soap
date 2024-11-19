@@ -1,0 +1,26 @@
+[
+  {
+    "id": "2ada0a50-047b-40c5-a508-36d00a502fa0",
+    "name": "John Doe",
+    "primaryPhone": "1234567890",
+    "email": "johndoe@example.com",
+    "createdAt": "2024-11-19T13:10:10.718Z",
+    "mobilePhone": "0987654321"
+  },
+  {
+    "id": "e7c3ccdb-b233-433f-865a-58195e65775a",
+    "name": "Juan",
+    "primaryPhone": "1234567890",
+    "email": "johndoe@example.com",
+    "createdAt": "2024-11-19T13:10:35.548Z",
+    "mobilePhone": "0987654321"
+  },
+  {
+    "id": "f243ed04-4e64-4f44-b40d-563a5537d0ac",
+    "name": "Alejandro",
+    "primaryPhone": "1234567890",
+    "email": "johndoe@example.com",
+    "createdAt": "2024-11-19T13:17:30.125Z",
+    "mobilePhone": "0987654321"
+  }
+]
