@@ -80,20 +80,19 @@ export const contactService = {
 
       async SortContacts(args: { criteria: keyof Contact }) {
         const contacts = await getAllContacts();
-        // Ordena los contactos según el criterio indicado
 
+        // Ordenar los contactos según el criterio proporcionado
         const sortedContacts = contacts.sort((a, b) => {
-          const valueA = a[args.criteria];
-          const valueB = b[args.criteria];
-          if (valueA === undefined) return 1;
-          if (valueB === undefined) return -1;
+          const valueA = a[args.criteria]?.toString().toLowerCase() || "";
+          const valueB = b[args.criteria]?.toString().toLowerCase() || "";
 
           if (valueA < valueB) return -1;
           if (valueA > valueB) return 1;
           return 0;
         });
 
-        return { sortedContacts: sortedContacts };
+        // Envolver el arreglo en un contenedor explícito
+        return { contacts: { contact: sortedContacts } };
       },
     },
   },
