@@ -45,6 +45,7 @@
         const contactForm = document.getElementById('contact-form');
         const contactList = document.getElementById('contacts');
         const searchBar = document.getElementById('search-bar');
+        let editingContactName = null;
 
         // Recuperar y mostrar todos los contactos
         async function fetchContacts(sortBy = 'name') {
@@ -69,10 +70,19 @@
                 contacts.forEach(contact => {
                     const li = document.createElement('li');
                     li.innerHTML = `
-                ${contact.name} - ${contact.primaryPhone}
-                <button onclick="editContact('${contact.name}')">Editar</button>
-                <button onclick="deleteContact('${contact.name}')">Eliminar</button>
-              `;
+                        ${contact.name} - ${contact.primaryPhone} - ${contact.mobilePhone} - ${contact.email}
+                    `;
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.addEventListener('click', () => editContact(contact));
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Eliminar';
+                    deleteButton.addEventListener('click', () => deleteContact(contact.name));
+
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
                     contactList.appendChild(li);
                 });
             } catch (error) {
@@ -99,12 +109,12 @@
         }
 
         // Editar un contacto
-        function editContact(name) {
-            const contact = Array.from(document.querySelectorAll('li')).find(li => li.textContent.includes(name));
-            const [nameValue, primaryPhone] = contact.textContent.split(' - ');
-
-            document.getElementById('name').value = nameValue.trim();
-            document.getElementById('primaryPhone').value = primaryPhone.trim();
+        function editContact(contact) {
+            editingContactName = contact.name;
+            document.getElementById('name').value = contact.name;
+            document.getElementById('primaryPhone').value = contact.primaryPhone;
+            document.getElementById('mobilePhone').value = contact.mobilePhone;
+            document.getElementById('email').value = contact.email;
             document.getElementById('form-title').textContent = 'Editar Contacto';
         }
 
@@ -115,9 +125,13 @@
             const formData = new FormData(contactForm);
             const data = Object.fromEntries(formData.entries());
 
-            const url = document.getElementById('form-title').textContent === 'Editar Contacto'
-                ? '/api/contact/edit'
-                : '/api/contact/add';
+            const isEditing = document.getElementById('form-title').textContent === 'Editar Contacto';
+
+            const url = isEditing ? '/api/contact/edit' : '/api/contact/add';
+
+            if (isEditing) {
+                data.originalName = editingContactName;
+            }
 
             try {
                 const response = await fetch(url, {
@@ -130,6 +144,7 @@
                 alert(result.message);
                 document.getElementById('form-title').textContent = 'Añadir Contacto';
                 contactForm.reset();
+                editingContactName = null;
                 fetchContacts();
             } catch (error) {
                 console.error('Error al guardar contacto:', error);
@@ -145,7 +160,7 @@
             }
 
             try {
-                const response = await fetch(`/api/contact/search?name=${name}`);
+                const response = await fetch(`/api/contact/search?name=${encodeURIComponent(name)}`);
                 if (!response.ok) {
                     throw new Error(`Error en la solicitud: ${response.statusText}`);
                 }
@@ -154,7 +169,21 @@
                 contactList.innerHTML = '';
                 if (contact && contact.name) {
                     const li = document.createElement('li');
-                    li.textContent = `${contact.name} - ${contact.primaryPhone}`;
+                    li.innerHTML = `
+                        ${contact.name} - ${contact.primaryPhone} - ${contact.mobilePhone} - ${contact.email}
+                    `;
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.addEventListener('click', () => editContact(contact));
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Eliminar';
+                    deleteButton.addEventListener('click', () => deleteContact(contact.name));
+
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
+
                     contactList.appendChild(li);
                 } else {
                     alert('Contacto no encontrado');
@@ -168,8 +197,6 @@
         // Cargar contactos al inicio
         fetchContacts();
     </script>
-
-
 </body>
 
 </html>
