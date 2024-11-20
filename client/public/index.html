@@ -9,194 +9,243 @@
 </head>
 
 <body>
-    <h1>Gestión de Contactos</h1>
+    <div class="container">
+        <h1>Gestión de Contactos</h1>
 
-    <!-- Formulario -->
-    <form id="contact-form">
-        <h2 id="form-title">Añadir Contacto</h2>
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name" placeholder="Ejemplo: Juan Pérez" required>
+        <!-- Formulario -->
+        <form id="contact-form">
+            <h2 id="form-title">Añadir Contacto</h2>
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" placeholder="Ejemplo: Juan Pérez" required>
 
-        <label for="primaryPhone">Teléfono Principal:</label>
-        <input type="text" id="primaryPhone" name="primaryPhone" placeholder="Ejemplo: 1234567890" required>
+            <label for="primaryPhone">Teléfono Principal:</label>
+            <input type="text" id="primaryPhone" name="primaryPhone" placeholder="Ejemplo: 1234567890" required>
 
-        <label for="mobilePhone">Teléfono Móvil:</label>
-        <input type="text" id="mobilePhone" name="mobilePhone" placeholder="Ejemplo: 0987654321" required>
+            <label for="mobilePhone">Teléfono Móvil:</label>
+            <input type="text" id="mobilePhone" name="mobilePhone" placeholder="Ejemplo: 0987654321" required>
 
-        <label for="email">Correo Electrónico:</label>
-        <input type="email" id="email" name="email" placeholder="Ejemplo: juan.perez@correo.com" required>
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" placeholder="Ejemplo: juan.perez@correo.com" required>
 
-        <button type="submit">Guardar Contacto</button>
-    </form>
+            <button type="submit">Guardar Contacto</button>
+        </form>
 
-    <!-- Barra de Búsqueda -->
-    <div>
-        <input type="text" id="search-bar" placeholder="Buscar contacto por nombre...">
-        <button id="search-button">Buscar</button>
+        <div class="search-sort-bar">
+            <!-- Barra de Búsqueda -->
+            <div class="search-bar">
+                <input type="text" id="search-bar" placeholder="Buscar contacto por nombre...">
+                <button id="search-button">Buscar</button>
+            </div>
+
+            <!-- Selector de Ordenamiento -->
+            <div class="sort-bar">
+                <label for="sort-select">Ordenar por:</label>
+                <select id="sort-select">
+                    <option value="name">Nombre</option>
+                    <option value="primaryPhone">Teléfono Principal</option>
+                    <option value="mobilePhone">Teléfono Móvil</option>
+                    <option value="email">Correo Electrónico</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Lista de Contactos -->
+        <div id="contact-list">
+            <h2>Contactos</h2>
+            <ul id="contacts"></ul>
+        </div>
+
+        <script>
+            const contactForm = document.getElementById('contact-form');
+            const contactList = document.getElementById('contacts');
+            const searchBar = document.getElementById('search-bar');
+            const sortSelect = document.getElementById('sort-select');
+            let editingContactName = null;
+
+            // Recuperar y mostrar todos los contactos
+            async function fetchContacts(sortBy = 'name') {
+                try {
+                    const response = await fetch(`/api/contact/sort`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ criteria: sortBy }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error en la solicitud: ${response.statusText}`);
+                    }
+
+                    const contacts = await response.json();
+                    if (!Array.isArray(contacts)) {
+                        throw new Error('La respuesta no es un arreglo de contactos.');
+                    }
+
+                    // Limpia la lista y renderiza los contactos
+                    contactList.innerHTML = '';
+                    contacts.forEach(contact => {
+                        const li = document.createElement('li');
+
+                        const contactInfo = document.createElement('div');
+                        contactInfo.className = 'contact-info';
+                        contactInfo.innerHTML = `
+                <p><strong>Nombre:</strong> ${contact.name}</p>
+                <p><strong>Teléfono Principal:</strong> ${contact.primaryPhone}</p>
+                <p><strong>Teléfono Móvil:</strong> ${contact.mobilePhone}</p>
+                <p><strong>Email:</strong> ${contact.email}</p>
+            `;
+
+                        const contactActions = document.createElement('div');
+                        contactActions.className = 'contact-actions';
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Editar';
+                        editButton.addEventListener('click', () => editContact(contact));
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Eliminar';
+                        deleteButton.addEventListener('click', () => deleteContact(contact.name));
+
+                        contactActions.appendChild(editButton);
+                        contactActions.appendChild(deleteButton);
+
+                        li.appendChild(contactInfo);
+                        li.appendChild(contactActions);
+
+                        contactList.appendChild(li);
+                    });
+                } catch (error) {
+                    console.error('Error al obtener contactos:', error);
+                    alert('No se pudieron cargar los contactos. Verifica tu conexión.');
+                }
+            }
+
+            // Eliminar un contacto
+            async function deleteContact(name) {
+                try {
+                    const response = await fetch('/api/contact/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name }),
+                    });
+
+                    const result = await response.json();
+                    alert(result.message);
+                    fetchContacts();
+                } catch (error) {
+                    console.error('Error al eliminar contacto:', error);
+                }
+            }
+
+            // Editar un contacto
+            function editContact(contact) {
+                editingContactName = contact.name;
+                document.getElementById('name').value = contact.name;
+                document.getElementById('primaryPhone').value = contact.primaryPhone;
+                document.getElementById('mobilePhone').value = contact.mobilePhone;
+                document.getElementById('email').value = contact.email;
+                document.getElementById('form-title').textContent = 'Editar Contacto';
+            }
+
+            // Guardar o editar contacto
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(contactForm);
+                const data = Object.fromEntries(formData.entries());
+
+                const isEditing = document.getElementById('form-title').textContent === 'Editar Contacto';
+
+                const url = isEditing ? '/api/contact/edit' : '/api/contact/add';
+
+                if (isEditing) {
+                    data.originalName = editingContactName;
+                }
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+                    alert(result.message);
+                    document.getElementById('form-title').textContent = 'Añadir Contacto';
+                    contactForm.reset();
+                    editingContactName = null;
+                    fetchContacts();
+                } catch (error) {
+                    console.error('Error al guardar contacto:', error);
+                }
+            });
+
+            // Buscar un contacto por nombre
+            document.getElementById('search-button').addEventListener('click', async () => {
+                const name = searchBar.value.trim();
+                if (!name) {
+                    fetchContacts(); // Si no hay búsqueda, recargar la lista completa
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/contact/search?name=${encodeURIComponent(name)}`);
+                    if (!response.ok) {
+                        throw new Error(`Error en la solicitud: ${response.statusText}`);
+                    }
+
+                    const contact = await response.json();
+                    contactList.innerHTML = '';
+                    if (contact && contact.name) {
+                        const li = document.createElement('li');
+
+                        const contactInfo = document.createElement('div');
+                        contactInfo.className = 'contact-info';
+                        contactInfo.innerHTML = `
+                <p><strong>Nombre:</strong> ${contact.name}</p>
+                <p><strong>Teléfono Principal:</strong> ${contact.primaryPhone}</p>
+                <p><strong>Teléfono Móvil:</strong> ${contact.mobilePhone}</p>
+                <p><strong>Email:</strong> ${contact.email}</p>
+            `;
+
+                        const contactActions = document.createElement('div');
+                        contactActions.className = 'contact-actions';
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Editar';
+                        editButton.addEventListener('click', () => editContact(contact));
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Eliminar';
+                        deleteButton.addEventListener('click', () => deleteContact(contact.name));
+
+                        contactActions.appendChild(editButton);
+                        contactActions.appendChild(deleteButton);
+
+                        li.appendChild(contactInfo);
+                        li.appendChild(contactActions);
+
+                        contactList.appendChild(li);
+                    } else {
+                        alert('Contacto no encontrado');
+                    }
+                } catch (error) {
+                    console.error('Error al buscar contacto:', error);
+                    alert('No se pudo buscar el contacto. Verifica tu conexión.');
+                }
+            });
+
+            // Manejar cambios en el selector de ordenamiento
+            sortSelect.addEventListener('change', async (event) => {
+                const sortBy = event.target.value;
+                await fetchContacts(sortBy);
+            });
+
+            // Cargar contactos al inicio
+            fetchContacts();
+
+
+        </script>
     </div>
-
-    <!-- Lista de Contactos -->
-    <div id="contact-list">
-        <h2>Contactos</h2>
-        <ul id="contacts"></ul>
-    </div>
-
-    <script>
-        const contactForm = document.getElementById('contact-form');
-        const contactList = document.getElementById('contacts');
-        const searchBar = document.getElementById('search-bar');
-        let editingContactName = null;
-
-        // Recuperar y mostrar todos los contactos
-        async function fetchContacts(sortBy = 'name') {
-            try {
-                const response = await fetch(`/api/contact/sort`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ criteria: sortBy }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error en la solicitud: ${response.statusText}`);
-                }
-
-                const contacts = await response.json();
-                if (!Array.isArray(contacts)) {
-                    throw new Error('La respuesta no es un arreglo de contactos.');
-                }
-
-                // Limpia la lista y renderiza los contactos
-                contactList.innerHTML = '';
-                contacts.forEach(contact => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        ${contact.name} - ${contact.primaryPhone} - ${contact.mobilePhone} - ${contact.email}
-                    `;
-
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Editar';
-                    editButton.addEventListener('click', () => editContact(contact));
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Eliminar';
-                    deleteButton.addEventListener('click', () => deleteContact(contact.name));
-
-                    li.appendChild(editButton);
-                    li.appendChild(deleteButton);
-                    contactList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Error al obtener contactos:', error);
-                alert('No se pudieron cargar los contactos. Verifica tu conexión.');
-            }
-        }
-
-        // Eliminar un contacto
-        async function deleteContact(name) {
-            try {
-                const response = await fetch('/api/contact/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name }),
-                });
-
-                const result = await response.json();
-                alert(result.message);
-                fetchContacts();
-            } catch (error) {
-                console.error('Error al eliminar contacto:', error);
-            }
-        }
-
-        // Editar un contacto
-        function editContact(contact) {
-            editingContactName = contact.name;
-            document.getElementById('name').value = contact.name;
-            document.getElementById('primaryPhone').value = contact.primaryPhone;
-            document.getElementById('mobilePhone').value = contact.mobilePhone;
-            document.getElementById('email').value = contact.email;
-            document.getElementById('form-title').textContent = 'Editar Contacto';
-        }
-
-        // Guardar o editar contacto
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData.entries());
-
-            const isEditing = document.getElementById('form-title').textContent === 'Editar Contacto';
-
-            const url = isEditing ? '/api/contact/edit' : '/api/contact/add';
-
-            if (isEditing) {
-                data.originalName = editingContactName;
-            }
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-
-                const result = await response.json();
-                alert(result.message);
-                document.getElementById('form-title').textContent = 'Añadir Contacto';
-                contactForm.reset();
-                editingContactName = null;
-                fetchContacts();
-            } catch (error) {
-                console.error('Error al guardar contacto:', error);
-            }
-        });
-
-        // Buscar un contacto por nombre
-        document.getElementById('search-button').addEventListener('click', async () => {
-            const name = searchBar.value.trim();
-            if (!name) {
-                fetchContacts(); // Si no hay búsqueda, recargar la lista completa
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/contact/search?name=${encodeURIComponent(name)}`);
-                if (!response.ok) {
-                    throw new Error(`Error en la solicitud: ${response.statusText}`);
-                }
-
-                const contact = await response.json();
-                contactList.innerHTML = '';
-                if (contact && contact.name) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        ${contact.name} - ${contact.primaryPhone} - ${contact.mobilePhone} - ${contact.email}
-                    `;
-
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Editar';
-                    editButton.addEventListener('click', () => editContact(contact));
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Eliminar';
-                    deleteButton.addEventListener('click', () => deleteContact(contact.name));
-
-                    li.appendChild(editButton);
-                    li.appendChild(deleteButton);
-
-                    contactList.appendChild(li);
-                } else {
-                    alert('Contacto no encontrado');
-                }
-            } catch (error) {
-                console.error('Error al buscar contacto:', error);
-                alert('No se pudo buscar el contacto. Verifica tu conexión.');
-            }
-        });
-
-        // Cargar contactos al inicio
-        fetchContacts();
-    </script>
 </body>
 
 </html>

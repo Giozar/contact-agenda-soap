@@ -1,62 +1,235 @@
+/* Reset básico para eliminar márgenes y paddings por defecto */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #eef2f7;
+  color: #333;
+}
+
+/* Estilo para el contenedor principal */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Título principal */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: #2c3e50;
+}
+
+/* Estilo del formulario */
+#contact-form {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+#contact-form h2 {
+  margin-bottom: 20px;
+  color: #34495e;
+}
+
+#contact-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#contact-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+#contact-form button {
+  width: 100%;
+  padding: 15px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#contact-form button:hover {
+  background: #2980b9;
+}
+
+/* Estilo de la barra de búsqueda */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.search-bar input {
+  width: 70%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px 0 0 4px;
+  font-size: 1em;
+}
+
+.search-bar button {
+  padding: 12px 20px;
+  background: #1abc9c;
+  color: #fff;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-bar button:hover {
+  background: #16a085;
+}
+
+/* Estilo de la lista de contactos */
+#contact-list h2 {
+  margin-bottom: 20px;
+  color: #34495e;
+}
+
+#contacts {
+  list-style: none;
+}
+
+#contacts li {
+  background: #fff;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info {
+  flex: 1;
+}
+
+.contact-info p {
+  margin-bottom: 5px;
+  font-size: 1em;
+}
+
+.contact-actions button {
+  padding: 10px 15px;
+  margin-left: 10px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.contact-actions button:first-child {
+  background: #f1c40f;
+}
+
+.contact-actions button:first-child:hover {
+  background: #d4ac0d;
+}
+
+.contact-actions button:hover {
+  background: #c0392b;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .search-bar input {
+      width: 60%;
   }
-  
-  h1 {
-    text-align: center;
-    margin-top: 20px;
+
+  #contacts li {
+      flex-direction: column;
+      align-items: flex-start;
   }
-  
-  form {
-    width: 300px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  .contact-actions {
+      margin-top: 10px;
   }
-  
-  label {
-    display: block;
-    margin: 10px 0 5px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  
-  button {
-    width: 100%;
-    padding: 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #0056b3;
-  }
-  
-  #response {
-    width: 300px;
-    margin: 20px auto;
-    padding: 10px;
-    background: #e8f5e9;
-    border: 1px solid #c8e6c9;
-    border-radius: 5px;
-  }
-  
-  pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  
+}
+
+
+/* Barra de Búsqueda y Ordenamiento */
+.search-sort-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 10px;
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar input {
+  width: 70%;
+  padding: 12px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px 0 0 4px;
+  font-size: 1em;
+}
+
+.search-bar button {
+  padding: 12px 20px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-bar button:hover {
+  background: #2980b9;
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-bar label {
+  font-size: 1em;
+  color: #2c3e50;
+}
+
+.sort-bar select {
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1em;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.sort-bar select:hover {
+  border-color: #3498db;
+}
