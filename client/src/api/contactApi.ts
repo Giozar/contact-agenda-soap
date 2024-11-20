@@ -108,21 +108,23 @@ contactApi.get('/contact/search', (req, res) => {
   });
 });
 
-// Ordenar y recuperar contactos
+/** Obtener y ordenar contactos */
 contactApi.post('/contact/sort', (req, res) => {
-    const { criteria } = req.body;
-  
-    soap.createClient(wsdlUrl, (err, client) => {
+  const { criteria } = req.body;
+
+  soap.createClient(wsdlUrl, (err, client) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error al crear el cliente SOAP', error: err.message });
+    }
+
+    client.SortContacts({ criteria }, (err: Error, result: { contacts: { contact: Contact[] } }) => {
       if (err) {
-        return res.status(500).json({ message: 'Error al crear el cliente SOAP', error: err.message });
+        return res.status(500).json({ message: 'Error al ordenar contactos', error: err.message });
       }
-  
-      client.SortContacts({ criteria }, (err: Error, result: { sortedContacts: Contact[] }) => {
-        if (err) {
-          return res.status(500).json({ message: 'Error al ordenar contactos', error: err.message });
-        }
-  
-        res.json(result.sortedContacts);
-      });
+
+      const contacts = result.contacts.contact || []; // Asegura que sea un arreglo
+      res.json(contacts);
     });
   });
+});
+
