@@ -3,7 +3,7 @@ import { contactApi } from './api/contactApi';
 import path from 'path';
 
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.static(path.join(__dirname, '../public')));
@@ -18,6 +18,6 @@ app.get('/', (req, res) => {
 });
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Cliente disponible en: http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Cliente disponible en: http://localhost:${port}`);
 });
