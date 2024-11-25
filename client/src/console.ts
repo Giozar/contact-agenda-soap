@@ -2,7 +2,7 @@ import inquirer, { Answers } from 'inquirer';
 import 'colors';
 import { Contact } from './interfaces/Contact';
 import { createContact, deleteContact, editContact, getAllContacts, searchContacts } from './controllers/contactController';
-import { chooseSortCriteria, inquirerMenu, pause, readInput, selectContact } from './helpers/contactInquirer';
+import { chooseSortCriteria, confirm, inquirerMenu, pause, readInput, selectContact } from './helpers/contactInquirer';
 
 // Menú de consola principal
 export const consoleMenu = async () => {
