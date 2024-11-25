@@ -1,5 +1,5 @@
 import express from 'express';
-import { contactApi } from './api/contactApi';
+import  contactRouter  from './routers/contactRouter';
 import path from 'path';
 import { consoleMenu } from './console';
 
@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 
 // Rutas
-app.use('/api', contactApi);
+app.use('/api', contactRouter);
 
 // Servir el archivo index.html
 app.get('/', (req, res) => {

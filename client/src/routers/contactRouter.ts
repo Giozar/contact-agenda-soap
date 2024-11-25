@@ -5,10 +5,10 @@ import { AddContactResponse, Contact } from 'src/interfaces/Contact';
 const host_api = process.env.HOST_API || 'http://localhost:4000';
 const wsdlUrl = `${host_api}/contactAgenda?wsdl`;
 
-export const contactApi = express.Router();
+const router = express.Router();
 
 /** Añadir un contacto */
-contactApi.post('/contact/add', (req, res) => {
+router.post('/contact/add', (req, res) => {
   const { name, primaryPhone, mobilePhone, email } = req.body;
 
   const args = { name, primaryPhone, mobilePhone, email };
@@ -29,7 +29,7 @@ contactApi.post('/contact/add', (req, res) => {
 });
 
 /** Obtener todos los contactos */
-contactApi.get('/contact/list', (req, res) => {
+router.get('/contact/list', (req, res) => {
   soap.createClient(wsdlUrl, (err, client) => {
     if (err) {
       return res.status(500).json({ message: 'Error al crear el cliente SOAP', error: err.message });
@@ -46,7 +46,7 @@ contactApi.get('/contact/list', (req, res) => {
 });
 
 /** Eliminar un contacto */
-contactApi.post('/contact/delete', (req, res) => {
+router.post('/contact/delete', (req, res) => {
   const { name } = req.body;
 
   const args = { name };
@@ -67,7 +67,7 @@ contactApi.post('/contact/delete', (req, res) => {
 });
 
 /** Editar un contacto */
-contactApi.post('/contact/edit', (req, res) => {
+router.post('/contact/edit', (req, res) => {
   const { name, primaryPhone, mobilePhone, email } = req.body;
 
   const args = { name, primaryPhone, mobilePhone, email };
@@ -88,7 +88,7 @@ contactApi.post('/contact/edit', (req, res) => {
 });
 
 /** Buscar un contacto por nombre */
-contactApi.get('/contact/search', (req, res) => {
+router.get('/contact/search', (req, res) => {
   const { name } = req.query;
 
   const args = { name };
@@ -109,7 +109,7 @@ contactApi.get('/contact/search', (req, res) => {
 });
 
 /** Obtener y ordenar contactos */
-contactApi.post('/contact/sort', (req, res) => {
+router.post('/contact/sort', (req, res) => {
   const { criteria } = req.body;
 
   soap.createClient(wsdlUrl, (err, client) => {
@@ -128,3 +128,4 @@ contactApi.post('/contact/sort', (req, res) => {
   });
 });
 
+export default router;
