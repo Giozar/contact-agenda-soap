@@ -5,25 +5,28 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc",
-		"start": "node dist/index.js",
-		"dev": "node --env-file=.env --watch --import tsx src/index.ts",
-		"format": "biome format --write ./",
-		"lint": "biome lint --write ./src"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "node --env-file=.env --watch --import tsx src/index.ts",
+    "console": "node --env-file=.env --watch --import tsx src/console.ts",
+    "format": "biome format --write ./",
+    "lint": "biome lint --write ./src"
   },
   "keywords": [],
   "author": "Giovanni Cortazar",
   "license": "ISC",
   "devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/express": "^5.0.0",
-		"@types/node": "^22.9.0",
-		"@types/soap": "^0.21.0",
-		"tsx": "^4.19.2",
-		"typescript": "^5.6.3"
-	},
-	"dependencies": {
-		"express": "^4.21.1",
-		"soap": "^1.1.6"
-	}
+    "@biomejs/biome": "1.9.4",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "@types/soap": "^0.21.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "colors": "^1.4.0",
+    "express": "^4.21.1",
+    "inquirer": "^12.1.0",
+    "soap": "^1.1.6"
+  }
 }
