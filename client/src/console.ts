@@ -40,6 +40,23 @@ const menuOpts: Answers = [
   },
 ];
 
+const selectContact = (contacts: Contact[]) => {
+    return [
+        {
+          type: 'list',
+          name: 'option',
+          message: '¿Qué quieres hacer?',
+          choices: contacts.map( (contact, i) => {
+            return {
+                value: `${contact}`,
+                name: `${i}`.yellow + `.${contact.name}`,
+            }
+          })
+        },
+      ];
+}
+
+
 const inquirerMenu = async () => {
   console.clear();
   console.log('========================'.green);
@@ -62,6 +79,23 @@ const pause = async () => {
 
   await inquirer.prompt(quiestion);
 };
+
+const showContactsAndSelect = async () => {
+    console.clear();
+    console.log('========================'.green);
+    console.log(' Lista de contactos'.white);
+    console.log('========================'.green);
+
+    const contacts = await getAllContacts();
+
+    if( contacts && contacts.length > 0) {
+        const contactOpts: Answers = selectContact(contacts);
+        const { option } = await inquirer.prompt(contactOpts);
+        return option;
+
+    }
+  
+  };
 
 const readInput = async (message: string) => {
   const question: Answers = [
@@ -113,6 +147,32 @@ const createContact = async ({ contact}: {contact: Contact}) => {
     }
 }
 
+
+const getAllContacts = async (sortBy = 'name') => {
+    let contacts: Contact[] = [];
+        try {
+            const response = await fetch(`${hostPort}/api/contact/sort`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ criteria: sortBy }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error en la solicitud: ${response.statusText}`);
+            }
+
+            contacts = await response.json();
+            
+            if (!Array.isArray(contacts)) {
+                throw new Error('La respuesta no es un arreglo de contactos.');
+            }
+
+            return contacts
+        } catch (error) {
+            console.error('Error al obtener contactos:', error);
+        }
+}
+
 export const consoleMenu = async () => {
   let opt = '';
 
@@ -139,6 +199,10 @@ export const consoleMenu = async () => {
         break;
       case '2':
         console.log('Editar contacto');
+
+        const contactEdit = await showContactsAndSelect();
+
+        console.log('contacto a editar', contactEdit);
         break;
 
       case '3':
