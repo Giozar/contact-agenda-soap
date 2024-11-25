@@ -1,6 +1,7 @@
 import express from 'express';
 import { contactApi } from './api/contactApi';
 import path from 'path';
+import { consoleMenu } from './console';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,7 +18,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Cliente disponible en: http://localhost:${port}`);
+  consoleMenu();
 });
